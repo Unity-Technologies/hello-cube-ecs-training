@@ -30,12 +30,6 @@ public class RotatingCubeSpawnerSystem : ComponentSystem
             for (int i = 0; i < spawnerData.NumCubes; ++i)
             {
                 float rad = ((float)i / (float)spawnerData.NumCubes) * Mathf.PI * 2.0f;
-
-                // Notice the usage of Unity.Mathematics.math trigonometric functions here.
-                // Unity.Mathematics is important when burst compiling code since the compiler is
-                // aware of these functions and can help you with vectorizing math code.  In this
-                // case, no burst compilation is occurring so we're just using Unity.Mathematics
-                // in anticipation for later versions of this code.
                 float posX = spawnerData.SpawnRadius * math.sin(rad);
                 float posZ = spawnerData.SpawnRadius * math.cos(rad);
 
