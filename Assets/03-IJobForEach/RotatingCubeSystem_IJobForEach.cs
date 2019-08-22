@@ -15,7 +15,7 @@ public class RotatingCubeSystem_IJobForEach : JobComponentSystem
     public struct RotatingCubeJob : IJobForEach<Rotation, RotationSpeed_IJobForEach>
     {
         public float DeltaTime;
-        
+
         // Notice the ref and use of the [ReadOnly] attribute.  These are ref parameters because you may want
         // to change the entity component data.  The [ReadOnly] attribute signals to the job system that the
         // RotationSpeed_IJobForEach component will only be read and thus can be scheduled with other jobs
@@ -32,6 +32,11 @@ public class RotatingCubeSystem_IJobForEach : JobComponentSystem
 
     protected override JobHandle OnUpdate(JobHandle inputDeps)
     {
+        // Scheduling a job requires you to create the job struct and call schedule on it with
+        // a JobHandle.  The JobHandle you pass in is the dependency of the job you pass in, so in
+        // this case, RotatingCubeJob is dependent on whatever job is represented by inputDeps.
+        // When you schedule a job, it returns a new JobHandle which you can use as dependencies to other
+        // jobs.
         return new RotatingCubeJob { DeltaTime = Time.deltaTime }.Schedule(this, inputDeps);
     }
 }
