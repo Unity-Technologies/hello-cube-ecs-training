@@ -346,7 +346,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   NumCubes: 10000
-  SpawnRadius: 5
+  SpawnRadius: 15
   RotatingCubePrefab: {fileID: 5701365453052575316, guid: 7e394766d6bcf403eb271d86a55d017b,
     type: 3}
 --- !u!1 &2139591466
@@ -426,7 +426,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2139591466}
   m_LocalRotation: {x: 0.17569396, y: -0, z: -0, w: 0.9844449}
-  m_LocalPosition: {x: 0, y: 3.11, z: -10}
+  m_LocalPosition: {x: 0, y: 8.72, z: -25.2}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
