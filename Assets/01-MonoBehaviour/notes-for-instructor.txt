@@ -3,7 +3,7 @@ code already completed.  It should be sufficient just to go over the
 code and show how the cubes are spawned and how they rotate.
 
 The real point of this scene is to show the performance of it in play
-mode.  On my MacBook Pro (2018) it runs at about 66 ms per frame and
+mode.  On my MacBook Pro (2018) it runs at about 45 ms per frame and
 is CPU bound.  Going into the profiler and showing where time is being
 spent, particularly in BehaviourUpdate with 10,000 instances of
 RotatingCube.Update() will set the baseline for the rest of this
