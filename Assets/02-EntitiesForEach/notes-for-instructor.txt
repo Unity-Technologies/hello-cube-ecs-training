@@ -1,0 +1,10 @@
+This is the first time the usage of DOTS will be illustrated through
+code.  This project already has the following preview packages
+installed:
+
+Entities
+Hybrid Renderer
+
+However, you should be sure to have it uninstalled when you start
+looking at 01-MonoBehaviour so that when you get to this part, you can
+show how to install the packages to get started with DOTS.
