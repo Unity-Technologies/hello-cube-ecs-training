@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class RotatingCube : MonoBehaviour
 {
+    public float RotationSpeed;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -58,8 +60,7 @@ public class RotatingCube : MonoBehaviour
         // How do these answers change when this sample is modified to handle mouse input?  For example, the cubes
         // should only rotate if the mouse is hovering over a cube (imagine a simple test like a sphere vs ray test
         // to determine if the mouse is hovering over a cube).
-        float rotationRate = 90.0f;
-        float rotationThisFrame = Time.deltaTime * rotationRate;
+        float rotationThisFrame = Time.deltaTime * RotationSpeed;
         transform.rotation *= Quaternion.AngleAxis(rotationThisFrame, Vector3.up);
     }
 }

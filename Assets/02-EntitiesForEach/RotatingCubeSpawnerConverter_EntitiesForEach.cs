@@ -1,14 +1,16 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using Unity.Entities;
+using Unity.Mathematics;
 using UnityEngine;
 
 // This is the spawner component data.  This information is required to be able to properly spawn
 // the cube entities.
-public struct RotatingCubeSpawnerData : IComponentData
+public struct RotatingCubeSpawnerData_EntitiesForEach : IComponentData
 {
     public int NumCubes;
     public float SpawnRadius;
+    public float RotationSpeed;
     public Entity RotatingCubePrefabEntity;
 }
 
@@ -17,10 +19,11 @@ public struct RotatingCubeSpawnerData : IComponentData
 // to produce an entity and you can specify what happens to the GameObject after conversion is complete.
 // See the ConvertToEntity component on the CubeSpawner GameObject to see the different conversion modes.
 [RequiresEntityConversion]
-public class RotatingCubeSpawnerConverter : MonoBehaviour, IConvertGameObjectToEntity, IDeclareReferencedPrefabs
+public class RotatingCubeSpawnerConverter_EntitiesForEach : MonoBehaviour, IConvertGameObjectToEntity, IDeclareReferencedPrefabs
 {
     public int NumCubes;
     public float SpawnRadius;
+    public float RotationSpeed;
     public GameObject RotatingCubePrefab;
 
     // Start is called before the first frame update
@@ -58,10 +61,11 @@ public class RotatingCubeSpawnerConverter : MonoBehaviour, IConvertGameObjectToE
 
         // Now that we have the prefab as an entity, we can save it in a component for another system
         // to use later.
-        var cubeSpawnerData = new RotatingCubeSpawnerData
+        var cubeSpawnerData = new RotatingCubeSpawnerData_EntitiesForEach
         {
             NumCubes = NumCubes,
             SpawnRadius = SpawnRadius,
+            RotationSpeed = math.radians(RotationSpeed),
             RotatingCubePrefabEntity = rotatingCubePrefabEntity,
         };
 

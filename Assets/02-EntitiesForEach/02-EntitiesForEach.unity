@@ -348,6 +348,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   NumCubes: 10000
   SpawnRadius: 15
+  RotationSpeed: 90
   RotatingCubePrefab: {fileID: 5701365453052575316, guid: 7e394766d6bcf403eb271d86a55d017b,
     type: 3}
 --- !u!114 &1778237250

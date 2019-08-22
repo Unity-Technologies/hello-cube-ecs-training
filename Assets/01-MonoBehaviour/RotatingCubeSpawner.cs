@@ -6,6 +6,7 @@ public class RotatingCubeSpawner : MonoBehaviour
 {
     public int NumCubes;
     public float SpawnRadius;
+    public float RotationSpeed;
     public GameObject RotatingCubePrefab;
 
     // Start is called before the first frame update
@@ -18,6 +19,7 @@ public class RotatingCubeSpawner : MonoBehaviour
             float posZ = SpawnRadius * Mathf.Cos(rad);
 
             var obj = Instantiate(RotatingCubePrefab);
+            obj.GetComponent<RotatingCube>().RotationSpeed = RotationSpeed;
             var transform = obj.GetComponent<Transform>();
             transform.position = new Vector3(posX, 0.0f, posZ);
         }
