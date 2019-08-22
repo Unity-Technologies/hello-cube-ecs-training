@@ -13,6 +13,8 @@ public class RotatingCube : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        float rotationRate = 2.0f;
+        float rotationThisFrame = Time.deltaTime * rotationRate;
+        transform.rotation *= Quaternion.AngleAxis(rotationThisFrame, Vector3.up);
     }
 }
