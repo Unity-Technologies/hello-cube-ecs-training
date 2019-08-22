@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using Unity.Entities;
 using UnityEngine;
 
-public struct ECSCubeSpawnerData : IComponentData
+// This is the spawner component data.  This information is required to be able to properly spawn
+// the cube entities.
+public struct RotatingCubeSpawnerData : IComponentData
 {
     public int NumCubes;
     public float SpawnRadius;
@@ -15,7 +17,7 @@ public struct ECSCubeSpawnerData : IComponentData
 // to produce an entity and you can specify what happens to the GameObject after conversion is complete.
 // See the ConvertToEntity component on the CubeSpawner GameObject to see the different conversion modes.
 [RequiresEntityConversion]
-public class ECSCubeSpawner : MonoBehaviour, IConvertGameObjectToEntity, IDeclareReferencedPrefabs
+public class RotatingCubeSpawnerConverter : MonoBehaviour, IConvertGameObjectToEntity, IDeclareReferencedPrefabs
 {
     public int NumCubes;
     public float SpawnRadius;
@@ -56,7 +58,7 @@ public class ECSCubeSpawner : MonoBehaviour, IConvertGameObjectToEntity, IDeclar
 
         // Now that we have the prefab as an entity, we can save it in a component for another system
         // to use later.
-        var cubeSpawnerData = new ECSCubeSpawnerData
+        var cubeSpawnerData = new RotatingCubeSpawnerData
         {
             NumCubes = NumCubes,
             SpawnRadius = SpawnRadius,

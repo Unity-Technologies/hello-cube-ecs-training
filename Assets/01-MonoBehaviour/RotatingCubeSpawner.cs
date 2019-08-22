@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CubeSpawner : MonoBehaviour
+public class RotatingCubeSpawner : MonoBehaviour
 {
     public int NumCubes;
     public float SpawnRadius;

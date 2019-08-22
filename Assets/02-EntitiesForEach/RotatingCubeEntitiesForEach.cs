@@ -1,8 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Unity.Entities;
 using UnityEngine;
 
-public class RotatingCubeEntitiesForEach : MonoBehaviour
+public class RotatingCubeEntitiesForEach : ComponentSystem
 {
     // Start is called before the first frame update
     void Start()
@@ -14,5 +15,9 @@ public class RotatingCubeEntitiesForEach : MonoBehaviour
     void Update()
     {
         
+    }
+
+    protected override void OnUpdate()
+    {
     }
 }
