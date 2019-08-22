@@ -8,3 +8,56 @@ Hybrid Renderer
 However, you should be sure to have it uninstalled when you start
 looking at 01-MonoBehaviour so that when you get to this part, you can
 show how to install the packages to get started with DOTS.
+
+You should present the code in roughly the following order:
+
+1. RotatingCubeSpawnerConverter.cs
+2. RotatingCubeSpawnerSystem.cs
+3. RotatingCubeSystem.cs
+
+In #1, the goal is to go from the GameObjects that you authored in the
+Unity editor to entities.  IConvertGameObjectToEntity and
+IDeclareReferencedPrefab are the programming interfaces required to
+make this conversion.  You should also point out that the CubeSpawner
+game object in the editor has a "Convert To Entity" component on it
+which indicates conversion of this game object must happen and
+controls what happens to the game object after conversion is complete.
+
+#2 shows how the actual spawning of cubes is handled.  Usually, at
+ this point, people may wonder why spawning of cubes requires this two
+ step process of creating a spawner entity and then having a system
+ process the spawner entity.  One of the key concepts in data oriented
+ design is that you must have data to make things happen.  The
+ spawning logic cannot possibly run if there is no spawning data to
+ run on.  This is why the conversion step is necessary; we have the
+ data in GameObjects but the data must be transformed into something
+ ECS will understand before the spawning logic can run.
+
+#3 is where the rotation logic is implemented.
+
+After this sample is completed, this is a good time to look at the
+profiler and introduce the entity debugger which can be found under:
+
+Window > Analysis > Entity Debugger
+
+While in play mode, the entity debugger will show you all the systems
+running on the left, entities in the middle, and chunks on the right
+right.  The chunk list on the right is of interest here.
+
+Several types of chunks will exist when you run this sample.  The one
+we are interested in is the one with 10,000 RotatingCubePrefabs.
+Select that chunk type and the entities list in the center will show a
+list of them.  When you select an entity, the inspector window will
+show the values of the components on that entity.  This inspector
+window is read only.
+
+Going back to the chunk list, you can see that each chunk has green
+bubbles with names which are the different component types in that
+chunk along with the read or write permissions on that component (the
+color green will change with the read/write permission of the
+component).  Below those components is a chunk utilization histogram
+where the X axis is the number of entities in the chunk and the Y axis
+is the number of chunks.
+
+After showing the entity debugger, you should move on to the next
+section.

@@ -24,6 +24,12 @@ public class RotatingCubeSpawnerSystem : ComponentSystem
 
     protected override void OnUpdate()
     {
+        // Entities.ForEach() is an easy to use programming interface to work with ECS.  You provide a function
+        // which specifies the component data required as arguments and fill in the function body with the logic
+        // you want to perform.
+        //
+        // The main disadvantage with this approach is that Entities.ForEach() executes on the main thread and does
+        // not take advantage of the job system.  Furthermore, burst compilation is not possible.
         Entities.ForEach((Entity entity, ref RotatingCubeSpawnerData spawnerData) =>
         {
             // This code is very similar to the MonoBehaviour version.
