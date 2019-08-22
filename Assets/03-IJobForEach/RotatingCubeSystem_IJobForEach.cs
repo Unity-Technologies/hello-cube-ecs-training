@@ -1,3 +1,4 @@
+using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Jobs;
@@ -7,6 +8,7 @@ using UnityEngine;
 
 public class RotatingCubeSystem_IJobForEach : JobComponentSystem
 {
+    // Try uncommenting this [BurstCompile] attribute!
     //[BurstCompile]
     public struct RotatingCubeJob : IJobForEach<Rotation, RotationSpeed_IJobForEach>
     {
