@@ -11,9 +11,9 @@ show how to install the packages to get started with DOTS.
 
 You should present the code in roughly the following order:
 
-1. RotatingCubeSpawnerConverter.cs
-2. RotatingCubeSpawnerSystem.cs
-3. RotatingCubeSystem.cs
+1. RotatingCubeSpawnerConverter_EntitiesForEach.cs
+2. RotatingCubeSpawnerSystem_EntitiesForEach.cs
+3. RotatingCubeSystem_EntitiesForEach.cs
 
 In #1, the goal is to go from the GameObjects that you authored in the
 Unity editor to entities.  IConvertGameObjectToEntity and

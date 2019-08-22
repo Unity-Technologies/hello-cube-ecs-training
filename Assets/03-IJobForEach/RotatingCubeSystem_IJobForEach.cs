@@ -8,12 +8,20 @@ using UnityEngine;
 
 public class RotatingCubeSystem_IJobForEach : JobComponentSystem
 {
+    // RotatingCubeJob is a job that operates on each entity with a Rotation and RotationSpeed_IJobForEach component.
+
     // Try uncommenting this [BurstCompile] attribute!
     //[BurstCompile]
     public struct RotatingCubeJob : IJobForEach<Rotation, RotationSpeed_IJobForEach>
     {
         public float DeltaTime;
-
+        
+        // Notice the ref and use of the [ReadOnly] attribute.  These are ref parameters because you may want
+        // to change the entity component data.  The [ReadOnly] attribute signals to the job system that the
+        // RotationSpeed_IJobForEach component will only be read and thus can be scheduled with other jobs
+        // that read this component.  Any job that is read/write on the component will cause a race condition
+        // and you will receive a warning if you try to schedule a job that has write access to this component
+        // at the same time as another job that has read or write access.
         public void Execute(ref Rotation rotation, [ReadOnly] ref RotationSpeed_IJobForEach rotationSpeed)
         {
             float rotationThisFrame = DeltaTime * rotationSpeed.Value;
