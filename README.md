@@ -96,3 +96,5 @@ To start, have the trainees install the Entities and Hybrid Renderer packages.  
 
 ![](markdown-resources/02-EntitiesForEach-PackMan1.png)
 ![](markdown-resources/02-EntitiesForEach-PackMan2.png)
+![](markdown-resources/02-EntitiesForEach-PackMan3.png)
+![](markdown-resources/02-EntitiesForEach-PackMan4.png)
