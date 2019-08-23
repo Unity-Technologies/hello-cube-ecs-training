@@ -275,7 +275,7 @@ Most of this code should be straightforward to understand and mirrors the origin
 EntityManager.DestroyEntity(entity);
 ```
 
-Why are we destroying an entity?  Remember that the entity we are working with is the cube spawner entity.  If we don't destroy it, then on the second frame of the game, this system will run again since it sees an entity with a `RotatingCubeSpawnerData` on it still and will run the spawning logic again.  By destroying the entity, we ensure the data for it doesn't exist so the system can't possibly run again on that entity.  This is a common way of running logic that should occur only once in ECS; create the data, have a system process it, and then destroy the data.  If there is no data, there is nothing to do!
+Why are we destroying an entity?  Remember that the entity we are working with is the cube spawner entity.  If we don't destroy it, then on the second frame of the game, this system will run again since it sees an entity with a `RotatingCubeSpawnerData` on it still and will run the spawning logic.  By destroying the entity, we ensure the data for it doesn't exist so the system can't possibly run again on that entity.  This is a common way of running logic that should occur only once in ECS; create the data, have a system process it, and then destroy the data.  If there is no data, there is nothing to do!
 
 You should now be spawning cubes, but no rotation will occur:
 
