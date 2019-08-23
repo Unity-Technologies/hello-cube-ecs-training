@@ -12,6 +12,8 @@ public class RotatingCubeSpawner : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        
+        /*
         for (int i = 0; i < NumCubes; ++i)
         {
             float rad = ((float)i / (float)NumCubes) * Mathf.PI * 2.0f;
@@ -23,6 +25,7 @@ public class RotatingCubeSpawner : MonoBehaviour
             var transform = obj.GetComponent<Transform>();
             transform.position = new Vector3(posX, 0.0f, posZ);
         }
+        */
     }
 
     // Update is called once per frame

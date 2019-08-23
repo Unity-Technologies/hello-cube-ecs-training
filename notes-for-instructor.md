@@ -13,4 +13,6 @@ The following sections will serve as an instructional guide for each scene and i
 ## 01-MonoBehaviour
 This scene represents what everyone knows in Unity today.  Using GameObjects and MonoBehaviours, we spawn a number of cubes which will then rotate.
 
-![]()
+![](markdown-resources/01-MonoBehaviour.png)
+
+In the hierarchy, you will find a CubeSpawner and a Cube game object.  The CubeSpawner will perform the actual work of spawning the rotating cubes.  The Cube game object merely serves as positional reference for the camera and doesn't serve any functional purpose.
