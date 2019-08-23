@@ -1,14 +1,63 @@
 # Hello Cube DOTS Training Notes for the Instructor
 
-This code sample is an introduction to DOTS and the Entities API.  It is set up to walk through three ways of rotating a large number of cubes in Unity to illustrate how DOTS can be used in a small, self contained example.  Included are three scenes:
+This document serves as an instructional guide to introduce trainees to key Data Oriented Design (DOD) concepts and Unity's Data Oriented Technology Stack (DOTS) and the Entities API.  Along with this document is a Unity project designed to give the first hands on exposure to DOTS.  It is set up to walk through three ways of rotating a large number of cubes in Unity to illustrate how DOTS can be used in a small, self contained example.  Included are three scenes:
 
 1. 01-MonoBehaviour
 2. 02-EntitiesForEach
 3. 03-IJobForEach
 
-The intent is for you to start with `01-MonoBehaviour` already completed and then modify the code toward the next version live in front of training participants and have them follow along on their own computers.  Wherever possible, the code has been commented to give more context and background.
+The intent is for you to start with the `01-MonoBehaviour` scene and code already completed and then modify the code toward the next version live in front of training participants and have them follow along on their own computers.  Wherever possible, the code has been commented to give more context and background.
 
-The following sections will serve as an instructional guide for each scene and its respective code.
+The remainder of this document will describe in detail the recommended teaching sequence for this sample.
+
+### Data Oriented Design
+This is the **most crucial** concept to get across for the whole training.  It is not merely doing everything with arrays (although that tends to be the case since linear array accesses are fast) or using ECS; it's a higher level concept where you understand all of your input data and what transform must be done to get the desired output data.  Present the following problem to trainees:
+
+> You want to rotate some cubes about the Y axis at a specified rotation rate.  The number of cubes to rotate is unknown, but it is reasonable to assume it can be any integer in the range [0, 100000]
+
+All trainees should be asked to think about the rotating cube problem and be able to answer the following questions:
+
+1. What is your input data?
+2. What is your output data?
+3. What transform must you do in order to generate the output data from the input data?
+4. What is the minimum set of input/output for the problem?
+5. What ranges of values do you expect for your inputs and outputs?
+
+Trainees should not use arbitrary world modeling nouns.  For example, if a cube class is mentioned, they have failed.  They should be identifying concrete data that the computer must interact with to achieve the desired outcome.
+
+Answers for this specific rotating cube problem:
+
+> Inputs:
+>
+> 1. Rotation quaternions.
+> 2. Delta time (single precision float).
+> 3. Rotation rates (single precision float).
+> 4. Number of cubes to rotate (integer).
+>
+> Outputs:
+>
+> 1. Rotation quaternions.
+>
+> (The above inputs and outputs are also minimal)
+>
+> Transformation:
+>
+> r = q * r, where q is the quaternion representing the rotation about the Y axis by (rotation rate * delta time) and r is the cube's current rotation quaternion.
+>
+> Expected input ranges:
+>
+> 1. Rotation quaternion.y will vary in range [-1, 1] and quaternion.w will vary in range [-1, 1].
+> 2. Time is frame time, so we expect it to be in the range (0, 33.33] milliseconds, but the upper bound could be larger.
+> 3. Rotation rate is constant, but it could vary with user input at edit time.
+> 4. Number of cubes to rotate is [0, 100000] as given by problem statement.
+>
+> Expected output ranges:
+>
+> 1. Quaternion output range is same as input range.
+
+Spend some time to go over trainee responses and compare with the given solutions.  After this is done, pose a question for trainees to think about:
+
+> How do these answers change if this sample is modified to handle mouse input?  For example, the cubes should only rotate if the mouse is hovering over a cube (assume that hovering is determined by a sphere vs ray intersection or some other simple intersection test).
 
 ## 01-MonoBehaviour
 This scene represents what everyone knows in Unity today.  Using GameObjects and MonoBehaviours, we spawn a number of cubes which will then rotate.  In the hierarchy, you will find a CubeSpawner and a Cube game object.  The CubeSpawner will perform the actual work of spawning the rotating cubes.  The Cube game object merely serves as positional reference for the camera and doesn't serve any functional purpose:
@@ -20,45 +69,6 @@ In the project, there should be a scene and two scripts:
 ![](markdown-resources/01-MonoBehaviour-Project.png)
 
 You should start in `RotatingCubeSpawner.cs` and quickly explain how the CubeSpawner will spawn the rotating cubes.  After showing the cube spawning logic, go to `RotatingCube.cs` and show how the cube rotates around the Y axis.
-
-### Data Oriented Design
-Here, you should take a few moments to talk about data oriented design, which is the **most crucial** concept to get across for the whole training.  It is not merely doing everything with arrays (although that tends to be the case since linear array accesses are fast); it's a higher level concept where you understand all the data you have to start with and what form you must transform it to in order to solve the problem.  When you know your data, what it starts off as and what you're trying to transform it to, many things are revealed that either makes implementing a solution very easy or forces you to redesign the data in a way to make a high quality, performant solution.  All trainees should be asked to think about the rotating cube problem and be able to answer the following questions:
-
-1. What is your input data?
-2. What is your output data?
-3. What is the minimum set of input/output for the problem?
-4. What ranges of values do you expect for your inputs and outputs?
-
-Answers for this specific rotating cube problem:
-
-> Inputs:
->
-> 1. Transform (specifically, the rotation quaternion).
-> 2. Time.
-> 3. Rotation rate.
->
-> Outputs:
->
-> 1. Transform.
->
-> (The above inputs and outputs are also minimal)
->
-> Expected input ranges:
->
-> 1. Transform
->    - Position should not change from cube's original spawn position.
->    - Scale should remain 1.0f.
->    - Rotation will vary with the quaternion.y in range [-1, 1] and quaternion.w in range [-1, 1].
-> 2. Time is frame time, so we expect it to be in the range (0, 33.33] milliseconds.
-> 3. Rotation rate is constant and we expect it to be 90 degrees per second.
->
-> Expected output ranges:
->
-> 1. Transform expected output is same as input.
-
-Spend some time to go over trainee responses and compare with the given solutions.  After this is done, pose a question for trainees to think about:
-
-> How do these answers change if this sample is modified to handle mouse input?  For example, the cubes should only rotate if the mouse is hovering over a cube (assume that hovering is determined by a sphere vs ray intersection or some other simple intersection test).
 
 Parameters such as the number of cubes in the X axis, Z axis, and speed of rotation can be set on the CubeSpawner's `RotatingCubeSpawner` component:
 
