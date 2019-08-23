@@ -37,19 +37,21 @@ public class RotatingCubeSpawnerSystem_IJobForEach : ComponentSystem
         // not take advantage of the job system.  Furthermore, burst compilation is not possible.
         Entities.ForEach((Entity entity, ref RotatingCubeSpawnerData_IJobForEach spawnerData) =>
         {
-            // This code is very similar to the MonoBehaviour version.
-            for (int i = 0; i < spawnerData.NumCubes; ++i)
+            for (int x = 0; x < spawnerData.NumXCubes; ++x)
             {
-                float rad = ((float)i / (float)spawnerData.NumCubes) * Mathf.PI * 2.0f;
-                float posX = spawnerData.SpawnRadius * math.sin(rad);
-                float posZ = spawnerData.SpawnRadius * math.cos(rad);
+                float posX = x - (spawnerData.NumXCubes / 2);
 
-                // Actually create a rotating cube entity from the prefab.
-                var rotatingCubeEntity = EntityManager.Instantiate(spawnerData.RotatingCubePrefabEntity);
+                for (int z = 0; z < spawnerData.NumZCubes; ++z)
+                {
+                    float posZ = z - (spawnerData.NumZCubes / 2);
 
-                // Set the position of the rotating cube.
-                EntityManager.SetComponentData(rotatingCubeEntity, new Translation { Value = new float3(posX, 0.0f, posZ) });
-                EntityManager.AddComponentData(rotatingCubeEntity, new RotationSpeed_IJobForEach { Value = spawnerData.RotationSpeed });
+                    // Actually create a rotating cube entity from the prefab.
+                    var rotatingCubeEntity = EntityManager.Instantiate(spawnerData.RotatingCubePrefabEntity);
+
+                    // Set the position of the rotating cube.
+                    EntityManager.SetComponentData(rotatingCubeEntity, new Translation { Value = new float3(posX, 0.0f, posZ) });
+                    EntityManager.AddComponentData(rotatingCubeEntity, new RotationSpeed_IJobForEach { Value = spawnerData.RotationSpeed });
+                }
             }
 
             // We should destroy this spawner entity because if we don't, the spawner will run again on the next frame

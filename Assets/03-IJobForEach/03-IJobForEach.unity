@@ -346,8 +346,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4d782fe42c7284d949d1c9049d56bfa3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  NumCubes: 10000
-  SpawnRadius: 15
+  NumXCubes: 150
+  NumZCubes: 150
   RotationSpeed: 90
   RotatingCubePrefab: {fileID: 5701365453052575316, guid: 7e394766d6bcf403eb271d86a55d017b,
     type: 3}

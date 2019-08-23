@@ -8,8 +8,8 @@ using UnityEngine;
 // the cube entities.
 public struct RotatingCubeSpawnerData_IJobForEach : IComponentData
 {
-    public int NumCubes;
-    public float SpawnRadius;
+    public int NumXCubes;
+    public int NumZCubes;
     public float RotationSpeed;
     public Entity RotatingCubePrefabEntity;
 }
@@ -21,8 +21,8 @@ public struct RotatingCubeSpawnerData_IJobForEach : IComponentData
 [RequiresEntityConversion]
 public class RotatingCubeSpawnerConverter_IJobForEach : MonoBehaviour, IConvertGameObjectToEntity, IDeclareReferencedPrefabs
 {
-    public int NumCubes;
-    public float SpawnRadius;
+    public int NumXCubes;
+    public int NumZCubes;
     public float RotationSpeed;
     public GameObject RotatingCubePrefab;
 
@@ -63,8 +63,8 @@ public class RotatingCubeSpawnerConverter_IJobForEach : MonoBehaviour, IConvertG
         // to use later.
         var cubeSpawnerData = new RotatingCubeSpawnerData_IJobForEach
         {
-            NumCubes = NumCubes,
-            SpawnRadius = SpawnRadius,
+            NumXCubes = NumXCubes,
+            NumZCubes = NumZCubes,
             RotationSpeed = math.radians(RotationSpeed),
             RotatingCubePrefabEntity = rotatingCubePrefabEntity,
         };
