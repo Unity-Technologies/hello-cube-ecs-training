@@ -95,6 +95,9 @@ This scene contains the first use of DOTS and the Entities API.  You should take
 To start, have the trainees install the Entities and Hybrid Renderer packages.  Go to Window > Package Manager (you may need to show all packages and show preview packages):
 
 ![](markdown-resources/02-EntitiesForEach-PackMan1.png)
+
 ![](markdown-resources/02-EntitiesForEach-PackMan2.png)
+
 ![](markdown-resources/02-EntitiesForEach-PackMan3.png)
+
 ![](markdown-resources/02-EntitiesForEach-PackMan4.png)
