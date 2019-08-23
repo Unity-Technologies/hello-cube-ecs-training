@@ -11,8 +11,12 @@ The intent is for you to start with `01-MonoBehaviour` already completed and the
 The following sections will serve as an instructional guide for each scene and its respective code.
 
 ## 01-MonoBehaviour
-This scene represents what everyone knows in Unity today.  Using GameObjects and MonoBehaviours, we spawn a number of cubes which will then rotate.
+This scene represents what everyone knows in Unity today.  Using GameObjects and MonoBehaviours, we spawn a number of cubes which will then rotate.  In the hierarchy, you will find a CubeSpawner and a Cube game object.  The CubeSpawner will perform the actual work of spawning the rotating cubes.  The Cube game object merely serves as positional reference for the camera and doesn't serve any functional purpose:
 
 ![](markdown-resources/01-MonoBehaviour.png)
 
-In the hierarchy, you will find a CubeSpawner and a Cube game object.  The CubeSpawner will perform the actual work of spawning the rotating cubes.  The Cube game object merely serves as positional reference for the camera and doesn't serve any functional purpose.
+In the project, there should be a scene and two scripts:
+
+![](markdown-resources/01-MonoBehaviour-Project.png)
+
+You should start in RotatingCubeSpawner.cs and quickly explain how the CubeSpawner will spawn the rotating cubes.  This portion does not need to take long and can be relatively high level, but you should show
