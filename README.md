@@ -90,7 +90,7 @@ About 80 milliseconds are spent on the CPU with about 27 milliseconds spent on u
 You have reached the end of the material to be presented for this scene.
 
 ## 02-EntitiesForEach
-This scene contains the first use of DOTS and the Entities API.  You should take the previous scene as the starting point and modify the code and assets to what you see in this scene, live in front of the trainees and have them follow along on their computers.
+This scene contains the first use of DOTS and the Entities API.  You should take the previous scene as the starting point and modify the code and assets to what you see in this scene, live in front of the trainees and have them follow along on their computers.  This guide will walk you through the recommended sequence to modify the previous scene into this one.
 
 To start, have the trainees install the Entities and Hybrid Renderer packages.  Go to Window > Package Manager (you may need to show all packages and show preview packages):
 
@@ -101,3 +101,4 @@ To start, have the trainees install the Entities and Hybrid Renderer packages.  
 ![](markdown-resources/02-EntitiesForEach-PackMan3.png)
 
 ![](markdown-resources/02-EntitiesForEach-PackMan4.png)
+
