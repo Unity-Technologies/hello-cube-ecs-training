@@ -60,6 +60,8 @@ Spend some time to go over trainee responses and compare with the given solution
 > How do these answers change if this sample is modified to handle mouse input?  For example, the cubes should only rotate if the mouse is hovering over a cube (assume that hovering is determined by a sphere vs ray intersection or some other simple intersection test).
 
 ## 01-MonoBehaviour
+![](markdown-resources/01-MonoBehaviour-PlayMode.png)
+
 This scene represents what everyone knows in Unity today.  Using GameObjects and MonoBehaviours, we spawn a number of cubes which will then rotate.  In the hierarchy, you will find a CubeSpawner and a Cube game object.  The CubeSpawner will perform the actual work of spawning the rotating cubes.  The Cube game object merely serves as positional reference for the camera and doesn't serve any functional purpose:
 
 ![](markdown-resources/01-MonoBehaviour.png)
