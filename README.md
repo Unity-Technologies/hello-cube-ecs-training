@@ -200,3 +200,83 @@ This makes the conversion system aware of the `RotatingCubePrefab` so it knows t
 We have now converted the CubeSpawner game object to an entity!
 
 ### Implementing CubeSpawner Logic with Entities.ForEach
+The cube spawner is now an entity, but when you enter play mode, no cubes are spawned:
+
+![](markdown-resources/02-EntitiesForEach-NoSpawning.png)
+
+Trainees might be confused why no cubes are spawning but recall that we only made the cube spawner into an entity but never actually implemented the logic to create new cubes.  In order to make the cube spawner do something, we must implement a ComponentSystem which will operate on the entities that have a `RotatingCubeSpawnerData` component.  Create a new script file named `RotatingCubeSpawner` and define this class:
+
+```
+public class RotatingCubeSpawner : ComponentSystem
+{
+    protected override void OnUpdate()
+    {
+    }
+}
+```
+
+Also define this component:
+
+```
+public struct RotationSpeed : IComponentData
+{
+    public float Value;
+}
+```
+
+ComponentSystems are where you work with entities and components to implement your data transformations.  `OnUpdate()` is called every frame and runs on the main thread.  Fill in that function like so:
+
+```
+    protected override void OnUpdate()
+    {
+        Entities.ForEach((Entity entity, ref RotatingCubeSpawnerData spawnerData) =>
+        {
+            for (int x = 0; x < spawnerData.NumXCubes; ++x)
+            {
+                float posX = x - (spawnerData.NumXCubes / 2);
+
+                for (int z = 0; z < spawnerData.NumZCubes; ++z)
+                {
+                    float posZ = z - (spawnerData.NumZCubes / 2);
+
+                    var rotatingCubeEntity = EntityManager.Instantiate(spawnerData.RotatingCubePrefabEntity);
+
+                    EntityManager.SetComponentData(rotatingCubeEntity, new Translation { Value = new float3(posX, 0.0f, posZ) });
+                    EntityManager.AddComponentData(rotatingCubeEntity, new RotationSpeed { Value = spawnerData.RotationSpeed });
+                }
+            }
+
+            EntityManager.DestroyEntity(entity);
+        });
+    }
+```
+
+`Entities.ForEach` is a convenient and easy API for working with ECS.  You just define a lambda with the components you're interested as inputs and the body should do the data transform you want.  In this case, we want to access every entity with a `RotatingCubeSpawnerData` component and spawn all the cubes.  The spawning of a cube is done with this line:
+
+```
+var rotatingCubeEntity = EntityManager.Instantiate(spawnerData.RotatingCubePrefabEntity);
+```
+
+To set the position of the newly instantiated cube, we set the `Translation` component:
+
+```
+EntityManager.SetComponentData(rotatingCubeEntity, new Translation { Value = new float3(posX, 0.0f, posZ) });
+```
+
+Finally, we add a new component of our own, `RotationSpeed` which will contain the radians per second each cube should rotate at:
+
+```
+EntityManager.AddComponentData(rotatingCubeEntity, new RotationSpeed { Value = spawnerData.RotationSpeed });
+```
+
+Most of this code should be straightforward to understand and mirrors the original MonoBehaviour logic.  The last line might be confusing:
+
+```
+EntityManager.DestroyEntity(entity);
+```
+
+Why are we destroying an entity?  Remember that the entity we are working with is the cube spawner entity.  If we don't destroy it, then on the second frame of the game, this system will run again since it sees an entity with a `RotatingCubeSpawnerData` on it still and will run the spawning logic again.  By destroying the entity, we ensure the data for it doesn't exist so the system can't possibly run again on that entity.  This is a common way of running logic that should occur only once in ECS; create the data, have a system process it, and then destroy the data.  If there is no data, there is nothing to do!
+
+You should now be spawning cubes, but no rotation will occur:
+
+![](markdown-resources/02-EntitiesForEach-Spawning.png)
