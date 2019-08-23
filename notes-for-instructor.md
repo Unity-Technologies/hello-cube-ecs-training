@@ -62,7 +62,12 @@ Spend some time to go over trainee responses and compare with the given solution
 ## 01-MonoBehaviour
 ![](markdown-resources/01-MonoBehaviour-PlayMode.png)
 
-This scene represents what everyone knows in Unity today.  Using GameObjects and MonoBehaviours, we spawn a number of cubes which will then rotate.  In the hierarchy, you will find a CubeSpawner and a Cube game object.  The CubeSpawner will perform the actual work of spawning the rotating cubes.  The Cube game object merely serves as positional reference for the camera and doesn't serve any functional purpose:
+This scene represents what everyone knows in Unity today.  Using GameObjects and MonoBehaviours, we spawn a number of cubes which will then rotate.  The Unity project already has the following packages installed but you should begin this exercise with them uninstalled (go to Window > Package Manager):
+
+1. Entities.
+2. Hybrid Renderer.
+
+In the hierarchy, you will find a CubeSpawner and a Cube game object.  The CubeSpawner will perform the actual work of spawning the rotating cubes.  The Cube game object merely serves as positional reference for the camera and doesn't serve any functional purpose:
 
 ![](markdown-resources/01-MonoBehaviour.png)
 
@@ -85,3 +90,9 @@ About 80 milliseconds are spent on the CPU with about 27 milliseconds spent on u
 You have reached the end of the material to be presented for this scene.
 
 ## 02-EntitiesForEach
+This scene contains the first use of DOTS and the Entities API.  You should take the previous scene as the starting point and modify the code and assets to what you see in this scene, live in front of the trainees and have them follow along on their computers.
+
+To start, have the trainees install the Entities and Hybrid Renderer packages.  Go to Window > Package Manager (you may need to show all packages and show preview packages):
+
+![](markdown-resources/02-EntitiesForEach-PackMan1.png)
+![](markdown-resources/02-EntitiesForEach-PackMan2.png)
