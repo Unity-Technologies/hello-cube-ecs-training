@@ -92,6 +92,7 @@ You have reached the end of the material to be presented for this scene.
 ## 02-EntitiesForEach
 This scene contains the first use of DOTS and the Entities API.  You should take the previous scene as the starting point and modify the code and assets to what you see in this scene, live in front of the trainees and have them follow along on their computers.  This guide will walk you through the recommended sequence to modify the previous scene into this one.  Take note: the code in this scene serves only as reference and the names of some structs and classes may differ from what is presented below.
 
+### Installing DOTS packages
 To start, have the trainees install the Entities and Hybrid Renderer packages.  Go to Window > Package Manager (you may need to show all packages and show preview packages):
 
 ![](markdown-resources/02-EntitiesForEach-PackMan1.png)
@@ -102,6 +103,7 @@ To start, have the trainees install the Entities and Hybrid Renderer packages.  
 
 ![](markdown-resources/02-EntitiesForEach-PackMan4.png)
 
+### Converting CubeSpawner
 We will begin by porting the cube spawning logic in `RotatingCubeSpawner.cs`.  The final ported code can be found in:
 
 * `RotatingCubeSpawnerConverter_EntitiesForEach.cs`
@@ -194,3 +196,7 @@ Define this function:
 This makes the conversion system aware of the `RotatingCubePrefab` so it knows to create an entity version of that prefab.  When you execute the code now, you will get a valid entity back for the prefab:
 
 ![](markdown-resources/02-EntitiesForEach-AfterDeclaringPrefab.png)
+
+We have now converted the CubeSpawner game object to an entity!
+
+### Implementing CubeSpawner Logic with Entities.ForEach
