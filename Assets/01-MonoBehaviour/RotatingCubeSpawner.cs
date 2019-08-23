@@ -4,28 +4,28 @@ using UnityEngine;
 
 public class RotatingCubeSpawner : MonoBehaviour
 {
-    public int NumCubes;
-    public float SpawnRadius;
+    public int NumXCubes;
+    public int NumZCubes;
     public float RotationSpeed;
     public GameObject RotatingCubePrefab;
 
     // Start is called before the first frame update
     void Start()
     {
-        
-        /*
-        for (int i = 0; i < NumCubes; ++i)
+        for (int x = 0; x < NumXCubes; ++x)
         {
-            float rad = ((float)i / (float)NumCubes) * Mathf.PI * 2.0f;
-            float posX = SpawnRadius * Mathf.Sin(rad);
-            float posZ = SpawnRadius * Mathf.Cos(rad);
+            float posX = x - (NumXCubes / 2);
 
-            var obj = Instantiate(RotatingCubePrefab);
-            obj.GetComponent<RotatingCube>().RotationSpeed = RotationSpeed;
-            var transform = obj.GetComponent<Transform>();
-            transform.position = new Vector3(posX, 0.0f, posZ);
+            for (int z = 0; z < NumZCubes; ++z)
+            {
+                float posZ = z - (NumZCubes / 2);
+
+                var obj = Instantiate(RotatingCubePrefab);
+                obj.GetComponent<RotatingCube>().RotationSpeed = RotationSpeed;
+                var transform = obj.GetComponent<Transform>();
+                transform.position = new Vector3(posX, 0.0f, posZ);
+            }
         }
-        */
     }
 
     // Update is called once per frame
