@@ -280,3 +280,52 @@ Why are we destroying an entity?  Remember that the entity we are working with i
 You should now be spawning cubes, but no rotation will occur:
 
 ![](markdown-resources/02-EntitiesForEach-Spawning.png)
+
+### Rotating cubes with Entities.ForEach
+We are finally ready to rotate some cubes with Entities.ForEach.  Create a new script file and name it `RotatingCubeSystem` and define this class:
+
+```
+public class RotatingCubeSystem : ComponentSystem
+{
+    protected override void OnUpdate()
+    {
+        Entities.ForEach(() =>
+        {
+        });
+    }
+}
+```
+
+Ask the trainees to think about the questions they answered at the beginning of the session regarding the input and output data for the rotating cube problem.  The answers they came up with should essentially be the implementation in this code:
+
+```
+public class RotatingCubeSystem : ComponentSystem
+{
+    protected override void OnUpdate()
+    {
+        Entities.ForEach((ref Rotation rotation, ref RotationSpeed rotationSpeed) =>
+        {
+            float rotationThisFrame = Time.deltaTime * rotationSpeed.Value;
+            var q = quaternion.AxisAngle(new float3(0.0f, 1.0f, 0.0f), rotationThisFrame);
+            rotation.Value = math.mul(q, rotation.Value);
+        });
+    }
+}
+```
+
+That's it, we're rotating cubes now!
+
+![](markdown-resources/02-EntitiesForEach-Rotating.png)
+
+Point out to the trainees how this code makes the data input and output much more explicit:
+
+```
+        Entities.ForEach((ref Rotation rotation, ref RotationSpeed rotationSpeed) =>
+        {
+            float rotationThisFrame = Time.deltaTime * rotationSpeed.Value;
+            var q = quaternion.AxisAngle(new float3(0.0f, 1.0f, 0.0f), rotationThisFrame);
+            rotation.Value = math.mul(q, rotation.Value);
+        });
+```
+
+We've explicitly named the `Rotation` component (a quaternion) and the `RotationSpeed` as inputs.  Delta time remains an implicit input here.  The number of cubes is not explicitly handled here by us; the `Entities.ForEach` API handles this for us.  Being more explicit with your data makes
