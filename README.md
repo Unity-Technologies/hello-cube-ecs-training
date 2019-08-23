@@ -90,7 +90,7 @@ About 80 milliseconds are spent on the CPU with about 27 milliseconds spent on u
 You have reached the end of the material to be presented for this scene.
 
 ## 02-EntitiesForEach
-This scene contains the first use of DOTS and the Entities API.  You should take the previous scene as the starting point and modify the code and assets to what you see in this scene, live in front of the trainees and have them follow along on their computers.  This guide will walk you through the recommended sequence to modify the previous scene into this one.
+This scene contains the first use of DOTS and the Entities API.  You should take the previous scene as the starting point and modify the code and assets to what you see in this scene, live in front of the trainees and have them follow along on their computers.  This guide will walk you through the recommended sequence to modify the previous scene into this one.  Take note: the code in this scene serves only as reference and the names of some structs and classes may differ from what is presented below.
 
 To start, have the trainees install the Entities and Hybrid Renderer packages.  Go to Window > Package Manager (you may need to show all packages and show preview packages):
 
@@ -101,4 +101,93 @@ To start, have the trainees install the Entities and Hybrid Renderer packages.  
 ![](markdown-resources/02-EntitiesForEach-PackMan3.png)
 
 ![](markdown-resources/02-EntitiesForEach-PackMan4.png)
+
+We will begin by porting the cube spawning logic in `RotatingCubeSpawner.cs`.  The final ported code can be found in:
+
+* `RotatingCubeSpawnerConverter_EntitiesForEach.cs`
+* `RotatingCubeSpawnerSystem_EntitiesForEach.cs`
+
+In `RotatingCubeSpawner.cs`, rename `RotatingCubeSpawnerConverter` (and rename the file if necessary) and make it also implement this interface:
+
+* `IConvertGameObjectToEntity`
+
+```
+public class RotatingCubeSpawner : MonoBehaviour
+```
+
+becomes:
+
+```
+public class RotatingCubeSpawnerConverter : MonoBehaviour, IConvertGameObjectToEntity
+```
+
+In the editor, find the CubeSpawner game object and be sure it has a `Rotating Cube Spawner Converter` component and add a new `Convert To Entity` component:
+
+![](markdown-resources/02-EntitiesForEach-CubeSpawnerComponents.png)
+
+(You may need to change the conversion mode to `Convert And Destroy`.  These conversion modes describe what must happen to the game object after conversion is performed.)
+
+Adding the `Convert To Entity` component tells the Entities conversion system that this game object will be converted into an entity and as a result of implementing `IConvertGameObjectToEntity`, you will have to implement this function to describe what happens when the game object is converted:
+
+```
+    public void Convert(Entity entity, EntityManager dstManager, GameObjectConversionSystem conversionSystem)
+    {
+    }
+```
+
+`entity` is the Entity that was created by the conversion system for this object and you must interact with the EntityManager `dstManager` to create the appropriate components for the converted entity and the GameObjectConversionSystem `conversionSystem` to deal with prefab objects.  Implement `Convert()` as follows:
+
+```
+    public void Convert(Entity entity, EntityManager dstManager, GameObjectConversionSystem conversionSystem)
+    {
+        var rotatingCubePrefabEntity = conversionSystem.GetPrimaryEntity(RotatingCubePrefab);
+
+        var cubeSpawnerData = new RotatingCubeSpawnerData
+        {
+            NumXCubes = NumXCubes,
+            NumZCubes = NumZCubes,
+            RotationSpeed = math.radians(RotationSpeed),
+            RotatingCubePrefabEntity = rotatingCubePrefabEntity,
+        };
+
+        dstManager.AddComponentData(entity, cubeSpawnerData);
+    }
+```
+
+This code will not compile since we have not yet defined `RotatingCubeSpawnerData`.  Define it now:
+
+```
+public struct RotatingCubeSpawnerData : IComponentData
+{
+    public int NumXCubes;
+    public int NumZCubes;
+    public float RotationSpeed;
+    public Entity RotatingCubePrefabEntity;
+}
+```
+
+We have defined our first component!  This component contains all the data necessary for the cube spawner to spawn cubes.  The conversion function should now compile and we can explain what it does to the trainees.  Recall that `entity` was created for us by the conversion system to represent the game object CubeSpawner.  Our conversion code takes the cube spawning data on the MonoBehaviour and puts it into component data and adds that component data to the entity so we know how many cubes will need to be spawned when we process this spawner entity later.  The one myster is this line dealing with the prefab:
+
+```
+var rotatingCubePrefabEntity = conversionSystem.GetPrimaryEntity(RotatingCubePrefab);
+```
+
+Somehow, the conversion system should know about our `RotatingCubePrefab` and give us an entity.  But we haven't done anything yet that deals with this prefab, so the entity we get back is null.  Try running the code and breaking here:
+
+![](markdown-resources/02-EntitiesForEach-NoReferencedPrefab.png)
+
+To fix this, make `RotatingCubeSpawnerConverter` also implement `IDeclareReferencedPrefabs`:
+
+```
+public class RotatingCubeSpawnerConverter : MonoBehaviour, IConvertGameObjectToEntity, IDeclareReferencedPrefabs
+```
+
+Define this function:
+
+```
+    public void DeclareReferencedPrefabs(List<GameObject> referencedPrefabs)
+    {
+        referencedPrefabs.Add(RotatingCubePrefab);
+    }
+```
 
