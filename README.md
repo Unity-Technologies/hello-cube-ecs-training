@@ -346,4 +346,162 @@ The Entity Debugger looks like this:
 
 ![](markdown-resources/02-EntitiesForEach-EntityDebugger1.png)
 
-On the left is the list of systems that are running, center is a list of entities, and the right contains chunk info for the entities.
+On the left is the list of systems that are running, center is a list of entities, and the right contains chunk info for the entities.  In the system menu, click on `RotatingCubeSystem` and you will see the list of entities change and will probably be blank at first.  If it is blank, select the top item marked `(RW Rotation) (RW Rotation Speed)`:
+
+![](markdown-resources/02-EntitiesForEach-EntityDebugger2.png)
+
+You should see a full list of entities like this:
+
+![](markdown-resources/02-EntitiesForEach-EntityDebugger3.png)
+
+You can select a specific entity in the list and view their component values in the inspector:
+
+![](markdown-resources/02-EntitiesForEach-EntityDebugger4.png)
+
+On the right, in the chunk list, you can see statistics about chunk utilizations of a particular archetype:
+
+![](markdown-resources/02-EntitiesForEach-EntityDebugger5.png)
+
+The chunk utilization graph is a histogram.  In this case, there are 549 total chunks for this archetype, 548 of those chunks have 41 entities in them and 1 chunk with less than 41 entities.  We spawned 22,500 cube entities so we should expect that adding up all the chunk's utilizations should add up to 22,500.  Doing some math, we can see that 548 * 41 = 22,468.  1 chunk has less than 41, but we can find out how much that chunk has from 22,500 - 22,468 = 32.  This chunk histogram can be very useful when debugging memory usage problems; if there are a lot of chunks with low chunk utilization, then you are wasting huge amounts of memory for each chunk only to hold a small number of entities.  In this case, we have very good utilization where almost every chunk is full.
+
+Another useful feature of the Entity Debugger is enabling or disabling systems.  On the left side in the sytem list, there is a checkbox which can turn systems on or off:
+
+![](markdown-resources/02-EntitiesForEach-EntityDebugger6.png)
+
+Disable the RotatingCubeSystem and you can see that all the cubes stop rotating.  The ability to turn systems on or off can be very useful in narrowing down the causes of bugs.
+
+## 03-IJobForEach
+Now that we have our data in components and are using the Entities API, we can start jobifying the code to make use of all the cores on the machine.  Return to `RotatingCubeSystem` and instead of inheriting from `ComponentSystem`, inherit from `JobComponentSystem`:
+
+```
+public class RotatingCubeSystem : JobComponentSystem
+{
+    protected override void OnUpdate()
+    {
+        Entities.ForEach((ref Rotation rotation, ref RotationSpeed rotationSpeed) =>
+        {
+            float rotationThisFrame = Time.deltaTime * rotationSpeed.Value;
+            var q = quaternion.AxisAngle(new float3(0.0f, 1.0f, 0.0f), rotationThisFrame);
+            rotation.Value = math.mul(q, rotation.Value);
+        });
+    }
+
+    protected override JobHandle OnUpdate(JobHandle inputDeps)
+    {
+    }
+}
+```
+
+This code will no longer compile and the `Entities.ForEach()` API is no longer usable.  Instead, we must create a job.  Define a `RotatingCubeJob`:
+
+```
+    public struct RotatingCubeJob : IJobForEach<Rotation, RotationSpeed>
+    {
+        public void Execute(ref Rotation rotation, [ReadOnly] ref RotationSpeed rotationSpeed)
+        {
+        }
+    }
+```
+
+The `Execute()` function here is what will be executed by each job thread, in parallel.  The `Rotation` component is assumed to have read/write access by the job system.  The `RotationSpeed` component is assumed to be read only by the job system due to the `[ReadOnly]`  attribute (be sure you have `using Unity.Collections;`).  This `[ReadOnly]` attribute is a hint to the job safety system that we don't intend to write to the `RotationSpeed` component, so any other job which only reads for that component should be safe to run in parallel.  However, if another job is scheduled with read/write access to `RotationSpeed` at the same time as this job, then an error will be generated to indicate a race condition.
+
+We should fill out the rest of the job code like so:
+
+```
+    public struct RotatingCubeJob : IJobForEach<Rotation, RotationSpeed>
+    {
+        public float DeltaTime;
+        
+        public void Execute(ref Rotation rotation, [ReadOnly] ref RotationSpeed rotationSpeed)
+        {
+            float rotationThisFrame = DeltaTime * rotationSpeed.Value;
+            var q = quaternion.AxisAngle(new float3(0.0f, 1.0f, 0.0f), rotationThisFrame);
+            rotation.Value = math.mul(q, rotation.Value);
+        }
+    }
+```
+
+The body of the `Execute()` function is nearly the same as the body of the lambda from the `Entities.ForEach()` version, the only difference being the use of `DeltaTime` from the job struct instead of `Time.deltaTime`.  We must do this because jobs cannot access static data; any static data or data from a managed object must be retrieved from the main thread and passed in as data on the job struct.  This is done to ensure that we are safely accessing managed objects, which can only be guaranteed on the main thread.
+
+Notice how in the job version of this code, the inputs and the outputs are even more explicit by passing delta time as a data member on the job struct.  When you spend the time to think about your data and how it needs to be transformed, before you write *any* code, you know a lot about your problem.  Writing the code (which can also be easily jobified) is almost a formality.
+
+Now we need to finish implementing `RotatingCubeSystem.OnUpdate()`:
+
+```
+    protected override JobHandle OnUpdate(JobHandle inputDeps)
+    {
+        return new RotatingCubeJob { DeltaTime = Time.deltaTime }.Schedule(this, inputDeps);
+    }
+```
+
+Here we create the `RotatingCubeJob` struct and set `DeltaTime` for the job to use.  The job struct has a `Schedule()` method which takes the system and a JobHandle as its dependency.  In this case, our `RotatingCubeJob` is dependent on whatever job is represented by `inputDeps` so it will execute after those jobs finish.  Each JobComponentSystem must return a JobHandle so that other systems that come after it can properly set up a dependency chain.
+
+The final code should look like this:
+
+```
+public class RotatingCubeSystem : JobComponentSystem
+{
+    public struct RotatingCubeJob : IJobForEach<Rotation, RotationSpeed>
+    {
+        public float DeltaTime;
+
+        public void Execute(ref Rotation rotation, [ReadOnly] ref RotationSpeed rotationSpeed)
+        {
+            float rotationThisFrame = DeltaTime * rotationSpeed.Value;
+            var q = quaternion.AxisAngle(new float3(0.0f, 1.0f, 0.0f), rotationThisFrame);
+            rotation.Value = math.mul(q, rotation.Value);
+        }
+    }
+
+    protected override JobHandle OnUpdate(JobHandle inputDeps)
+    {
+        return new RotatingCubeJob { DeltaTime = Time.deltaTime }.Schedule(this, inputDeps);
+    }
+}
+```
+
+### Performance of IJobForEach
+Enter play mode and open the profiler:
+
+![](markdown-resources/03-IJobForEach-Parallel.png)
+
+Performance is massively improved due to usage of jobs.  The actual work of rotating the cubes now takes about 2.72 ms of wall clock time (instead of ~23.5 ms on the main thread with Entities.ForEach).  The overall frame time has gone from ~40 ms with Entities.ForEach and now we are achieving about 20 ms, a speedup of 2x!
+
+### But wait, there's more!
+As impressive as this is, we can improve performance even further.  Go back to `RotatingCubeJob` and add the `[BurstCompile]` attribute to the struct:
+
+```
+    [BurstCompile]
+    public struct RotatingCubeJob : IJobForEach<Rotation, RotationSpeed>
+    {
+        public float DeltaTime;
+
+        public void Execute(ref Rotation rotation, [ReadOnly] ref RotationSpeed rotationSpeed)
+        {
+            float rotationThisFrame = DeltaTime * rotationSpeed.Value;
+            var q = quaternion.AxisAngle(new float3(0.0f, 1.0f, 0.0f), rotationThisFrame);
+            rotation.Value = math.mul(q, rotation.Value);
+        }
+    }
+```
+
+Go back into play mode and open the profiler.  Look around in one of the job threads for `RotatingCubeSystem:RotatingCubeJob (Burst)`:
+
+![](markdown-resources/03-IJobForEach-Burst.png)
+
+The RotatingCubeJob is now *even faster*, going from a total execution time of 31.89 ms without Burst to 1 ms with Burst!  This is the power of machine code.  For those inclined to see the machine code, they can go into the Burst Inspector via Jobs > Burst > Open inspector:
+
+![](markdown-resources/03-IJobForEach-BurstInspector1.png)
+
+You can select various jobs and then click `Refresh Disassembly` to see the compiled code:
+
+![](markdown-resources/03-IJobForEach-BurstInspector2.png)
+
+Going all the way back to the original MonoBehaviour version, we had 80 ms frame times for 22,500 rotating cubes.  Now we can do many times more cubes at even faster frame times.
+
+## Conclusion
+You have reached the end of this exercise and introduced DOTS.  If time permits, you can have trainees attempt to implement the question we posed at the beginning during the data oriented design section:
+
+> How do these answers change if this sample is modified to handle mouse input?  For example, the cubes should only rotate if the mouse is hovering over a cube (assume that hovering is determined by a sphere vs ray intersection or some other simple intersection test).
+
+Trainees should come up with the data required first, just like in the exercise and then write the code to implement their data transformation.  The point is for this to be **data oriented design**.
