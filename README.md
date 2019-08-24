@@ -328,4 +328,22 @@ Point out to the trainees how this code makes the data input and output much mor
         });
 ```
 
-We've explicitly named the `Rotation` component (a quaternion) and the `RotationSpeed` as inputs.  Delta time remains an implicit input here.  The number of cubes is not explicitly handled here by us; the `Entities.ForEach` API handles this for us.  Being more explicit with your data makes
+We've explicitly named the `Rotation` component (a quaternion) and the `RotationSpeed` as inputs.  Delta time remains an implicit input here.  The number of cubes is not explicitly handled here by us; the `Entities.ForEach` API handles this for us.  Being more explicit with your data makes understanding your problem much easier and opens up optimization opportunities.  What we've done here is a basic but very fundamental application of data oriented design and the Entities package provides you tools to apply this.
+
+### Performance of Entities.ForEach
+Enter play mode and open the profiler.  You should see something similar to this:
+
+![](markdown-resources/02-EntitiesForEach-Profiler.png)
+
+The overall frame time has decreased significantly but those gains come from CPU rendering work, not the rotating cube update.  In the screenshot, the highlighted portion is the RotatingCubeSystem and again, everything is on the main thread and the job worker threads are idle.  If you compare with the BehaviourUpdate time in the MonoBehaviour version, it is very similar (~20.6 ms vs ~23.5 ms).
+
+### Entity Debugger
+When using the Entities API, it can be very helpful to use the Entity Debugger to see what systems are running, what entities exist, and what the chunk utilization looks like.  Open the Entity Debugger by going to Window > Analysis > Entity Debugger:
+
+![](markdown-resources/02-EntitiesForEach-EntityDebuggerMenu.png)
+
+The Entity Debugger looks like this:
+
+![](markdown-resources/02-EntitiesForEach-EntityDebugger1.png)
+
+On the left is the list of systems that are running, center is a list of entities, and the right contains chunk info for the entities.
